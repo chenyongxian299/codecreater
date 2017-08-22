@@ -50,6 +50,10 @@ public class Login {
                 String userName = txtUserName.getText();
                 String password = new String(pwdPassword.getPassword());
                 String schemaName = txtSchemaName.getText();
+                if(schemaName.equals("")){
+                    JOptionPane.showMessageDialog(null, "请输入数据库名称", "错误", JOptionPane.PLAIN_MESSAGE);
+                    return;
+                }
                 host = "jdbc:mysql://" + host + ":" + port + "/" + schemaName + "?serverTimezone=GMT&characterEncoding=utf8&useUnicode=true&useSSL=false";
                 parameter = new ConnectionParameter(host, userName, password);
                 parameter.setSchemaName(schemaName);
