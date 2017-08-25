@@ -1,9 +1,20 @@
 package com.cyx.dbtools.bean;
 
+import org.beetl.sql.core.annotatoin.Table;
+
+@Table(name="TABLES")
 public class TableInfo {
+    public enum TableType {
+        BASE_TABLE, VIEW;
+    }
+
     private String tableCatalog;
     private String tableSchema;
     private String tableName;
+    private String tableType;
+    private String engine;
+    private String tableCollation;
+
 
     public String getTableCatalog() {
         return tableCatalog;

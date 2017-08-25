@@ -1,5 +1,8 @@
 package com.cyx.dbtools.bean;
 
+import org.beetl.sql.core.annotatoin.Table;
+
+@Table(name="COLUMNS")
 public class ColumnInfo {
 
     private String columnName;

@@ -16,6 +16,8 @@
         <freemarker.version>2.3.24-atlassian-2</freemarker.version>
         <jooq.version>3.9.4</jooq.version>
         <fastjson.version>1.2.36</fastjson.version>
+        <jsoup.version>1.10.3</jsoup.version>
+        <beetlsql.version>2.9.5</beetlsql.version>
     </properties>
     <dependencies>
 
@@ -78,6 +80,19 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ibeetl</groupId>
+            <artifactId>beetlsql</artifactId>
+            <version>${beetlsql.version}</version>
         </dependency>
 
     </dependencies>
