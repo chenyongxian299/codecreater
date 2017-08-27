@@ -13,8 +13,6 @@
         <slf4j.version>1.8.0-alpha2</slf4j.version>
         <jdbc.version>6.0.6</jdbc.version>
         <c3p0.version>0.9.5.2</c3p0.version>
-        <freemarker.version>2.3.24-atlassian-2</freemarker.version>
-        <jooq.version>3.9.4</jooq.version>
         <fastjson.version>1.2.36</fastjson.version>
         <jsoup.version>1.10.3</jsoup.version>
         <beetlsql.version>2.9.5</beetlsql.version>
@@ -49,30 +47,6 @@
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>${c3p0.version}</version>
-        </dependency>
-
-        <!-- freemarker 模板引擎 https://mvnrepository.com/artifact/org.freemarker/freemarker -->
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>${freemarker.version}</version>
-        </dependency>
-
-        <!--  jooq 框架 -->
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>${jooq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-meta</artifactId>
-            <version>${jooq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <version>${jooq.version}</version>
         </dependency>
 
         <!--fastjson https://mvnrepository.com/artifact/com.alibaba/fastjson -->
