@@ -11,17 +11,22 @@ import com.cyx.creater.service.imp.ColumnService;
 import com.cyx.creater.service.imp.SchemaService;
 import com.cyx.creater.service.ITableDescribe;
 import com.cyx.creater.service.imp.TableService;
+import com.cyx.creater.utils.ThreadUtil;
+import com.cyx.creater.view.listener.AsyncTreeExpansionListener;
 import org.beetl.sql.core.*;
 
 import javax.swing.*;
+import javax.swing.event.TreeExpansionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class IndexFrame {
     private JPanel plIndex;
-    private JTree tree1;
+    private JTree treeLeft;
 
     public JPanel getPlIndex() {
         return plIndex;
@@ -31,13 +36,14 @@ public class IndexFrame {
         this.plIndex = plIndex;
     }
 
-    public JTree getTree1() {
-        return tree1;
+    public JTree getTreeLeft() {
+        return treeLeft;
     }
 
-    public void setTree1(JTree tree1) {
-        this.tree1 = tree1;
+    public void setTreeLeft(JTree treeLeft) {
+        this.treeLeft = treeLeft;
     }
+
 
     public void initDatabaseInfo(IDataSource dataSource) {
 
@@ -47,7 +53,7 @@ public class IndexFrame {
         ITableDescribe tableService = new TableService(sqlManager);
         IColumnDescribe columnService = new ColumnService(sqlManager);
         List<SchemataInfo> schemataInfoList = schemaService.getSchemataDescribe();
-        new Thread(new Runnable() {
+        ThreadUtil.executorService.execute(new Runnable() {
             @Override
             public void run() {
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode("数据库");
@@ -63,14 +69,14 @@ public class IndexFrame {
                         schemataNode.add(tablesNode);
                         List<ColumnInfo> columnInfos = columnService.getColumnsDescribe(tableInfo.getTableName());
                         for (ColumnInfo columnInfo : columnInfos) {
-                            DefaultMutableTreeNode columnsNode = new DefaultMutableTreeNode(columnInfo.getColumnName() + "   " +columnInfo.getColumnType());
+                            DefaultMutableTreeNode columnsNode = new DefaultMutableTreeNode(columnInfo.getColumnName() + "   " + columnInfo.getColumnType());
                             tablesNode.add(columnsNode);
                         }
                     }
                 }
-                tree1.setModel(new DefaultTreeModel(root));
+                treeLeft.setModel(new DefaultTreeModel(root));
             }
-        }).start();
+        });
     }
 
     /**

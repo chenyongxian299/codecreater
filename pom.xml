@@ -16,6 +16,7 @@
         <fastjson.version>1.2.36</fastjson.version>
         <jsoup.version>1.10.3</jsoup.version>
         <beetlsql.version>2.9.5</beetlsql.version>
+        <beetl.version>2.7.21</beetl.version>
     </properties>
     <dependencies>
 
@@ -67,6 +68,11 @@
             <groupId>com.ibeetl</groupId>
             <artifactId>beetlsql</artifactId>
             <version>${beetlsql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibeetl</groupId>
+            <artifactId>beetl</artifactId>
+            <version>${beetl.version}</version>
         </dependency>
 
     </dependencies>
