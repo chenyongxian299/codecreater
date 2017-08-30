@@ -2,7 +2,7 @@ package com.cyx.creater.bean;
 
 import org.beetl.sql.core.annotatoin.Table;
 
-@Table(name="COLUMNS")
+@Table(name = "COLUMNS")
 public class ColumnInfo {
 
     private String columnName;
@@ -184,5 +184,10 @@ public class ColumnInfo {
 
     public void setGenerationExpression(String generationExpression) {
         this.generationExpression = generationExpression;
+    }
+
+    @Override
+    public String toString() {
+        return this.getColumnName() + "  " + this.getColumnType();
     }
 }

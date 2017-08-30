@@ -2,11 +2,13 @@ package com.cyx.creater.bean;
 
 import org.beetl.sql.core.annotatoin.Table;
 
+import java.io.Serializable;
+
 /**
  * 对应数据库information_schema的SCHEMATA表
  */
 @Table(name="SCHEMATA")
-public class SchemataInfo {
+public class SchemataInfo implements Serializable{
     private String catalogName;
 
     private String schemaName;
@@ -55,5 +57,10 @@ public class SchemataInfo {
 
     public void setSqlPath(String sqlPath) {
         this.sqlPath = sqlPath;
+    }
+
+    @Override
+    public String toString() {
+        return schemaName;
     }
 }

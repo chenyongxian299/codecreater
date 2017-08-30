@@ -3,6 +3,7 @@ package com.cyx.creater.view;
 import com.cyx.creater.bean.ColumnInfo;
 import com.cyx.creater.bean.SchemataInfo;
 import com.cyx.creater.bean.TableInfo;
+import com.cyx.creater.dao.ColumnsDao;
 import com.cyx.creater.dbhelper.BeetlSql;
 import com.cyx.creater.dbhelper.IDataSource;
 import com.cyx.creater.service.IColumnDescribe;
@@ -29,6 +30,9 @@ public class IndexFrame {
     private PopupMenu pMenu = new PopupMenu();
     private DialogJoin dialogJoin = new DialogJoin();
 
+    private ITableDescribe tableService;
+    private IColumnDescribe columnService;
+
     public JPanel getPlIndex() {
         return plIndex;
     }
@@ -46,10 +50,11 @@ public class IndexFrame {
     }
 
     public void initDatabaseInfo(IDataSource dataSource) {
-        MenuItem mItemCopy = new MenuItem("复制");
-        MenuItem mItemPaste = new MenuItem("粘贴");
+        MenuItem mItemCopy = new MenuItem("打开弹窗");
+        MenuItem mItemPaste = new MenuItem("打开tab");
         MenuItem mItemCut = new MenuItem("剪切");
         mItemCopy.addActionListener(menuActionListener);
+        mItemPaste.addActionListener(menuActionListener);
         pMenu.add(mItemCopy);
         pMenu.add(mItemPaste);
         pMenu.add(mItemCut);
@@ -57,17 +62,18 @@ public class IndexFrame {
         BeetlSql beetlSql = BeetlSql.getInstance();
         SQLManager sqlManager = beetlSql.registerSqlManager("/sql/mysql", dataSource);
         ISchemaDescribe schemaService = new SchemaService(sqlManager);
-        ITableDescribe tableService = new TableService(sqlManager);
-        IColumnDescribe columnService = new ColumnService(sqlManager);
+        tableService = new TableService(sqlManager);
+        columnService = new ColumnService(sqlManager);
         List<SchemataInfo> schemataInfoList = schemaService.getSchemataDescribe();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode("数据库");
-                for (SchemataInfo info : schemataInfoList) {
-                    DefaultMutableTreeNode schemataNode = new DefaultMutableTreeNode(info.getSchemaName());
+                for (SchemataInfo schemataInfo : schemataInfoList) {
+                    DefaultMutableTreeNode schemataNode = new DefaultMutableTreeNode(schemataInfo);
                     root.add(schemataNode);
-                    if (info.getSchemaName().equals("information_schema")) {
+
+    /*                if (info.getSchemaName().equals("information_schema")) {
                         continue;
                     }
                     List<TableInfo> tableInfos = tableService.getTablesDescribe(info.getSchemaName());
@@ -79,7 +85,7 @@ public class IndexFrame {
                             DefaultMutableTreeNode columnsNode = new DefaultMutableTreeNode(columnInfo.getColumnName() + "   " + columnInfo.getColumnType());
                             tablesNode.add(columnsNode);
                         }
-                    }
+                    }*/
                 }
                 tree1.setModel(new DefaultTreeModel(root));
             }
@@ -90,13 +96,18 @@ public class IndexFrame {
     ActionListener menuActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            dialogJoin.setVisible(true);
+            if (e.getActionCommand().equals("打开弹窗")) {
+                dialogJoin.setVisible(true);
+            } else if (e.getActionCommand().equals("打开tab")) {
+                JPanel jPanel = new JPanel();
+                tabRight.add(jPanel, "新建-");
+            }
         }
     };
     MouseListener ml = new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON3){//只响应鼠标右键单击事件
-                pMenu.show(tree1,e.getX(),e.getY());//在鼠标位置显示弹出式菜单
+            if (e.getButton() == MouseEvent.BUTTON3) {//只响应鼠标右键单击事件
+                pMenu.show(tree1, e.getX(), e.getY());//在鼠标位置显示弹出式菜单
             } else {
                 int selRow = tree1.getRowForLocation(e.getX(), e.getY());
                 TreePath selPath = tree1.getPathForLocation(e.getX(), e.getY());
@@ -104,13 +115,32 @@ public class IndexFrame {
                     if (e.getClickCount() == 1) {
                         //mySingleClick(selRow, selPath);
                     } else if (e.getClickCount() == 2) {
-                        //myDoubleClick(selRow, selPath);
-                        System.out.println(selPath.getLastPathComponent().toString());
+                        loadData(selPath.getLastPathComponent());
                     }
                 }
             }
         }
     };
+
+    private void loadData(Object object) {
+        DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) object;
+        Object dataObj = defaultMutableTreeNode.getUserObject();
+        if (dataObj instanceof SchemataInfo) {
+            List<TableInfo> tableInfos = tableService.getTablesDescribe(((SchemataInfo) dataObj).getSchemaName());
+            for (TableInfo tableInfo : tableInfos) {
+                DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode(tableInfo);
+                defaultMutableTreeNode.add(tablesNode);
+            }
+        } else if (dataObj instanceof TableInfo) {
+            List<ColumnInfo> columnInfos = columnService.getColumnsDescribe(((TableInfo) dataObj).getTableName());
+            for (ColumnInfo columnInfo : columnInfos) {
+                DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode(columnInfo);
+                defaultMutableTreeNode.add(tablesNode);
+            }
+        } else if (dataObj instanceof ColumnInfo) {
+
+        }
+    }
 
     /**
      * @noinspection ALL
