@@ -16,12 +16,18 @@ import org.beetl.sql.core.*;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 
 public class IndexFrame {
     private JPanel plIndex;
     private JTree tree1;
+    private JTabbedPane tabRight;
+
+    private PopupMenu pMenu = new PopupMenu();
+    private DialogJoin dialogJoin = new DialogJoin();
 
     public JPanel getPlIndex() {
         return plIndex;
@@ -40,7 +46,14 @@ public class IndexFrame {
     }
 
     public void initDatabaseInfo(IDataSource dataSource) {
-
+        MenuItem mItemCopy = new MenuItem("复制");
+        MenuItem mItemPaste = new MenuItem("粘贴");
+        MenuItem mItemCut = new MenuItem("剪切");
+        mItemCopy.addActionListener(menuActionListener);
+        pMenu.add(mItemCopy);
+        pMenu.add(mItemPaste);
+        pMenu.add(mItemCut);
+        tree1.add(pMenu);
         BeetlSql beetlSql = BeetlSql.getInstance();
         SQLManager sqlManager = beetlSql.registerSqlManager("/sql/mysql", dataSource);
         ISchemaDescribe schemaService = new SchemaService(sqlManager);
@@ -63,7 +76,7 @@ public class IndexFrame {
                         schemataNode.add(tablesNode);
                         List<ColumnInfo> columnInfos = columnService.getColumnsDescribe(tableInfo.getTableName());
                         for (ColumnInfo columnInfo : columnInfos) {
-                            DefaultMutableTreeNode columnsNode = new DefaultMutableTreeNode(columnInfo.getColumnName() + "   " +columnInfo.getColumnType());
+                            DefaultMutableTreeNode columnsNode = new DefaultMutableTreeNode(columnInfo.getColumnName() + "   " + columnInfo.getColumnType());
                             tablesNode.add(columnsNode);
                         }
                     }
@@ -71,7 +84,33 @@ public class IndexFrame {
                 tree1.setModel(new DefaultTreeModel(root));
             }
         }).start();
+        tree1.addMouseListener(ml);
     }
+
+    ActionListener menuActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            dialogJoin.setVisible(true);
+        }
+    };
+    MouseListener ml = new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON3){//只响应鼠标右键单击事件
+                pMenu.show(tree1,e.getX(),e.getY());//在鼠标位置显示弹出式菜单
+            } else {
+                int selRow = tree1.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree1.getPathForLocation(e.getX(), e.getY());
+                if (selRow != -1) {
+                    if (e.getClickCount() == 1) {
+                        //mySingleClick(selRow, selPath);
+                    } else if (e.getClickCount() == 2) {
+                        //myDoubleClick(selRow, selPath);
+                        System.out.println(selPath.getLastPathComponent().toString());
+                    }
+                }
+            }
+        }
+    };
 
     /**
      * @noinspection ALL
