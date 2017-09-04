@@ -17,6 +17,7 @@
         <jsoup.version>1.10.3</jsoup.version>
         <beetlsql.version>2.9.5</beetlsql.version>
         <beetl.version>2.7.21</beetl.version>
+        <dom.version>2.0.1</dom.version>
     </properties>
     <dependencies>
 
@@ -63,6 +64,12 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>${dom.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.ibeetl</groupId>
@@ -74,6 +81,7 @@
             <artifactId>beetl</artifactId>
             <version>${beetl.version}</version>
         </dependency>
+
 
     </dependencies>
 

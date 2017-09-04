@@ -6,6 +6,7 @@ import com.cyx.creater.dbhelper.IConnection;
 import com.cyx.creater.dbhelper.IDataSource;
 import com.cyx.creater.dbhelper.JDBConnection;
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
+import org.jb2011.lnf.beautyeye.ch16_tree.BETreeUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,41 +30,28 @@ public class Login {
     private ConnectionParameter parameter;
     private IConnection connection;
 
-    private static IndexFrame indexFrameObj = new IndexFrame();
+    private static IndexFrame indexFrameObj;
 
     public Login() {
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+        btnCancel.addActionListener((event) -> System.exit(0));
+        btnConn.addActionListener((event) -> {
+            if (isSuccess()) {
+                loginFrame.setVisible(false);
+                indexFrame.setVisible(true);
+                String host = txtHost.getText();
+                String port = txtPort.getText();
+                String userName = txtUserName.getText();
+                String password = new String(pwdPassword.getPassword());
+                String schemaName = txtSchemaName.getText();
+                host = "jdbc:mysql://" + host + ":" + port + "/" + schemaName + "?serverTimezone=GMT&characterEncoding=utf8&useUnicode=true&useSSL=false";
+                parameter = new ConnectionParameter(host, userName, password);
+                parameter.setSchemaName(schemaName);
+                parameter.setMinPoolSize(3);
+                IDataSource iDataSource = C3P0Connection.getInstance(parameter);
+                indexFrameObj.initDatabaseInfo(iDataSource);
             }
         });
-        btnConn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (isSuccess()) {
-                    loginFrame.setVisible(false);
-                    indexFrame.setVisible(true);
-                    String host = txtHost.getText();
-                    String port = txtPort.getText();
-                    String userName = txtUserName.getText();
-                    String password = new String(pwdPassword.getPassword());
-                    String schemaName = txtSchemaName.getText();
-                    host = "jdbc:mysql://" + host + ":" + port + "/" + schemaName + "?serverTimezone=GMT&characterEncoding=utf8&useUnicode=true&useSSL=false";
-                    parameter = new ConnectionParameter(host, userName, password);
-                    parameter.setSchemaName(schemaName);
-                    parameter.setMinPoolSize(3);
-                    IDataSource iDataSource = C3P0Connection.getInstance(parameter);
-                    indexFrameObj.initDatabaseInfo(iDataSource);
-                }
-            }
-        });
-        btnConnTest.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isSuccess();
-            }
-        });
+        btnConnTest.addActionListener((event) -> isSuccess());
     }
 
     private IConnection getConn() {
@@ -106,12 +94,20 @@ public class Login {
 
     public static void main(String[] args) {
         try {
+            System.setProperty("sun.java2d.noddraw", "true");
             BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.translucencySmallShadow;
+            BeautyEyeLNFHelper.translucencyAtFrameInactive = false;
             BeautyEyeLNFHelper.launchBeautyEyeLNF();
             UIManager.put("RootPane.setupButtonVisible", false);
+            UIManager.put("TabbedPane.tabAreaInsets"
+                    , new javax.swing.plaf.InsetsUIResource(3, 20, 2, 20));
         } catch (Exception e) {
             //TODO exception
         }
+        initApp();
+    }
+
+    private static void initApp() {
         loginFrame = new JFrame("code creater");
         loginFrame.setContentPane(new Login().plLogin);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -120,13 +116,11 @@ public class Login {
 
         initMenu();
 
+        indexFrameObj = new IndexFrame();
         indexFrame = new JFrame("IndexFrame");
         indexFrame.setContentPane(indexFrameObj.getPlIndex());
         indexFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         indexFrame.pack();
         indexFrame.setVisible(false);
-
     }
-
-
 }

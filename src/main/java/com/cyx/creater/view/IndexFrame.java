@@ -13,6 +13,8 @@ import com.cyx.creater.service.imp.SchemaService;
 import com.cyx.creater.service.ITableDescribe;
 import com.cyx.creater.service.imp.TableService;
 import org.beetl.sql.core.*;
+import org.jb2011.lnf.beautyeye.ch16_tree.BETreeUI;
+import org.jb2011.lnf.beautyeye.ch2_tab.BETabbedPaneUI;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -32,6 +34,11 @@ public class IndexFrame {
 
     private ITableDescribe tableService;
     private IColumnDescribe columnService;
+
+    public IndexFrame() {
+        tree1.setUI(new BETreeUI());
+        tabRight.setUI(new BETabbedPaneUI());
+    }
 
     public JPanel getPlIndex() {
         return plIndex;
@@ -65,30 +72,13 @@ public class IndexFrame {
         tableService = new TableService(sqlManager);
         columnService = new ColumnService(sqlManager);
         List<SchemataInfo> schemataInfoList = schemaService.getSchemataDescribe();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                DefaultMutableTreeNode root = new DefaultMutableTreeNode("数据库");
-                for (SchemataInfo schemataInfo : schemataInfoList) {
-                    DefaultMutableTreeNode schemataNode = new DefaultMutableTreeNode(schemataInfo);
-                    root.add(schemataNode);
-
-    /*                if (info.getSchemaName().equals("information_schema")) {
-                        continue;
-                    }
-                    List<TableInfo> tableInfos = tableService.getTablesDescribe(info.getSchemaName());
-                    for (TableInfo tableInfo : tableInfos) {
-                        DefaultMutableTreeNode tablesNode = new DefaultMutableTreeNode(tableInfo.getTableName());
-                        schemataNode.add(tablesNode);
-                        List<ColumnInfo> columnInfos = columnService.getColumnsDescribe(tableInfo.getTableName());
-                        for (ColumnInfo columnInfo : columnInfos) {
-                            DefaultMutableTreeNode columnsNode = new DefaultMutableTreeNode(columnInfo.getColumnName() + "   " + columnInfo.getColumnType());
-                            tablesNode.add(columnsNode);
-                        }
-                    }*/
-                }
-                tree1.setModel(new DefaultTreeModel(root));
+        new Thread(() -> {
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("数据库");
+            for (SchemataInfo schemataInfo : schemataInfoList) {
+                DefaultMutableTreeNode schemataNode = new DefaultMutableTreeNode(schemataInfo);
+                root.add(schemataNode);
             }
+            tree1.setModel(new DefaultTreeModel(root));
         }).start();
         tree1.addMouseListener(ml);
     }
@@ -104,6 +94,7 @@ public class IndexFrame {
             }
         }
     };
+
     MouseListener ml = new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON3) {//只响应鼠标右键单击事件

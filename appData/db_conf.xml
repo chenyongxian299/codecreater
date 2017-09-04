@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<confRoot>
+    <dbConfigs>
+        <config>
+            <configName></configName>
+            <host></host>
+            <port></port>
+            <username></username>
+            <password></password>
+            <schema></schema>
+        </config>
+    </dbConfigs>
+</confRoot>
