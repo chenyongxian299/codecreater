@@ -35,6 +35,6 @@ public class ColumnService implements IColumnDescribe {
 
     @Override
     public String getColumnsNameStr(String tableName) {
-        return null;
+        return columnsDao.queryColumnStrByTable(tableName);
     }
 }

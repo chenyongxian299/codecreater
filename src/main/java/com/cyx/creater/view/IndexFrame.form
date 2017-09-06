@@ -17,12 +17,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="c04e5" class="javax.swing.JTree" binding="tree1" default-binding="true">
-            <constraints>
-              <splitpane position="left"/>
-            </constraints>
-            <properties/>
-          </component>
           <tabbedpane id="75da3" binding="tabRight">
             <constraints>
               <splitpane position="right"/>
@@ -31,6 +25,19 @@
             <border type="none"/>
             <children/>
           </tabbedpane>
+          <scrollpane id="8bee4">
+            <constraints>
+              <splitpane position="left"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="c04e5" class="javax.swing.JTree" binding="tree1" default-binding="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
         </children>
       </splitpane>
     </children>

@@ -188,6 +188,6 @@ public class ColumnInfo {
 
     @Override
     public String toString() {
-        return this.getColumnName() + "  " + this.getColumnType();
+        return this.getColumnName() + "  " + this.getColumnType() + ":" + this.getColumnComment();
     }
 }

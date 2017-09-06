@@ -1,0 +1,26 @@
+<script src="/admin/user/chose.js"></script>
+
+<div id="${pageFileDir}_chose_dg" style="width: 600px; height: 800px; background-color: #F5F5F5;" class="easyui-dialog" closed="true">
+    <div class="shareted-dialog" style="display:none;">
+        <div class="wrapper wrapper-content" style="width:100%; height: 100%">
+            <div class="ibox float-e-margins form-inline">
+                <div class="ibox-title">
+                    <div class="form-group">
+                        <div name="${pageFileDir}_chose_div_search_user_name" class="input-group">
+                            <span class="input-group-addon">用户名</span>
+                            <input id="${pageFileDir}_chose_ipt_search_user_name" style="width: 200px;"/>
+                        </div>
+                        <button onclick="${pageFileDir}_chose_datagrid_search_commit()" class="btn btn- btn-primary">搜索</button>
+                        <button onclick="${pageFileDir}_chose_datagrid_search_reset()" class="btn btn- btn-warning">重置</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins form-inline">
+                <div class="ibox-content">
+                    <table id="${pageFileDir}_chose_datagrid" style="width:100%;"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

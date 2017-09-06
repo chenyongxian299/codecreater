@@ -12,4 +12,4 @@ SELECT * FROM information_schema.`COLUMNS` WHERE table_name = #tableName#
 
 queryColumnStrByTable
 ===
-SELECT GROUP_CONCAT(`COLUMN`.COLUMN_NAME) AS column_str FROM information_schema.`COLUMN` WHERE table_name = #tableName#
+SELECT GROUP_CONCAT(`COLUMNS`.COLUMN_NAME) AS column_str FROM information_schema.`COLUMNS` `COLUMNS` WHERE table_name = #tableName#
