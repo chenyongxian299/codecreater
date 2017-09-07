@@ -44,7 +44,20 @@ public class FileUtil {
         return new String[]{dir, fileName};
     }
 
-    public String getContent(InputStream fis, String charset) {
+    public static String getContent(String path, String charset) {
+        File file = new File(path);
+        if (file.exists()) {
+            try {
+                return getContent(new FileInputStream(file), charset);
+            } catch (FileNotFoundException e) {
+                return "";
+            }
+        } else {
+            return "";
+        }
+    }
+
+    public static String getContent(InputStream fis, String charset) {
         int len = -1;
         byte[] readSize = new byte[1024];
         StringBuffer sb = new StringBuffer("");
@@ -73,6 +86,7 @@ public class FileUtil {
 
     /**
      * 查找出dir下的所有文件
+     *
      * @param dir 根目录
      * @return List<InputStream> 输出流集合
      * @throws FileNotFoundException
@@ -110,6 +124,7 @@ public class FileUtil {
         }
         return fileList;
     }
+
     public static boolean isExists(String path) {
         File file = new File(path);
         return isExists(file);

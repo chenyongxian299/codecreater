@@ -35,6 +35,13 @@ public class Creater {
         return creater;
     }
 
+    /**
+     * 注册一个模板管理器
+     *
+     * @param flag       模板管理器名称
+     * @param management
+     * @return
+     */
     public Creater registTemplateManagement(String flag, TemplateManagement management) {
         templateManagementMap.put(flag, management);
         return this;
@@ -45,36 +52,85 @@ public class Creater {
         return this;
     }
 
-    public Creater start(String name) {
-
+    /**
+     * 异步启动 根据模板管理器名称生成
+     *
+     * @param name
+     * @return
+     */
+    public Creater startAsync(final String name) {
         ThreadUtil.executorService.execute(() -> {
-            TemplateManagement management = templateManagementMap.get(name);
-            TemplateReader templateReader = management.getTemplateReader();
-            TemplateWriter templateWriter = management.getTemplateWriter();
-            TemplateVariable templateVariable = management.getTemplateVariable();
-            if (templateReader == null) {
-                templateReader = new FileTemplateReader("", "UTF-8");
-            }
-            Map<String, Object> variableMap = templateVariable.getStaticVariable();
-            Configuration cfg = null;
-            try {
-                cfg = Configuration.defaultConfiguration();
-                StringTemplateResourceLoader resourceLoader = new StringTemplateResourceLoader();
-                GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
-                String templateContent = templateReader.read();
-                Template template = gt.getTemplate(templateContent);
-                template.binding(variableMap);
-                String result = template.render();
-                templateWriter.writer(result);
-                if (createResult != null) {
-                    createResult.createSuccess();
-                }
-            } catch (IOException e) {
-                if (createResult != null) {
-                    createResult.createFail(e);
-                }
+            runCreater(name);
+        });
+        return this;
+    }
+
+    /**
+     * 异步启动 根据所有的模板管理器生成
+     * @return
+     */
+    public Creater startAsync() {
+        ThreadUtil.executorService.execute(() -> {
+            for (String key : templateManagementMap.keySet()) {
+                runCreater(key);
             }
         });
         return this;
+    }
+
+
+    /**
+     * 同步启动  根据模板管理器名称生成
+     * @param name 模板管理器名称
+     * @return
+     */
+    public Creater startSync(String name) {
+        runCreater(name);
+        return this;
+    }
+
+    /**
+     * 同步启动  根据所有的模板管理器生成
+     * @return
+     */
+    public Creater startSync() {
+        for (String key : templateManagementMap.keySet()) {
+            runCreater(key);
+        }
+        return this;
+    }
+
+    /**
+     * 生成模板的同意方法
+     *
+     * @param name 模板管理器名称
+     */
+    private void runCreater(String name) {
+        TemplateManagement management = templateManagementMap.get(name);
+        TemplateReader templateReader = management.getTemplateReader();
+        TemplateWriter templateWriter = management.getTemplateWriter();
+        TemplateVariable templateVariable = management.getTemplateVariable();
+        if (templateReader == null) {
+            templateReader = new FileTemplateReader("", "UTF-8");
+        }
+        Map<String, Object> variableMap = templateVariable.getStaticVariable();
+        Configuration cfg = null;
+        try {
+            cfg = Configuration.defaultConfiguration();
+            StringTemplateResourceLoader resourceLoader = new StringTemplateResourceLoader();
+            GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
+            String templateContent = templateReader.read();
+            Template template = gt.getTemplate(templateContent);
+            template.binding(variableMap);
+            String result = template.render();
+            templateWriter.writer(result);
+            if (createResult != null) {
+                createResult.createSuccess();
+            }
+        } catch (IOException e) {
+            if (createResult != null) {
+                createResult.createFail(e);
+            }
+        }
     }
 }

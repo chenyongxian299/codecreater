@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+    <template_var>
+        <var key="addUrl">api/**/add</var>
+    </template_var>
+    <template_file>
+        <file>
+            
+        </file>
+    </template_file>
+</template>

@@ -252,7 +252,8 @@ public class IndexFrame {
             FileTemplateReader reader = new FileTemplateReader(file.getAbsolutePath(), "utf8");
             FileTemplateWriter writer = new FileTemplateWriter(System.getProperty("user.dir") + File.separator + "template_r" + File.separator + file.getName(), "utf8");
             TemplateManagement management = new TemplateManagement(reader, writer, variable);
-            creater.registTemplateManagement(file.getAbsolutePath(), management).start(file.getAbsolutePath());
+            creater.registTemplateManagement(file.getAbsolutePath(), management);
         }
+        creater.startAsync();
     }
 }
