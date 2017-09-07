@@ -85,4 +85,6 @@ public class ConnectionParameter {
     public void setMaxStatements(Integer maxStatements) {
         this.maxStatements = maxStatements;
     }
+
+
 }

@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template>
     <template_var>
+        <var key="addTitle">添加</var>
+        <var key="setTitle">编辑</var>
+        <var key="choseTitle">选择</var>
         <var key="addUrl">api/**/add</var>
+        <var key="setUrl">api/**/set</var>
+        <var key="deleteUrl">api/**/del</var>
+        <var key="isActiveUrl">api/**/set/is_active</var>
+        <var key="listUrl">api/**/list</var>
+        <var key="getUrl">api/**/get</var>
+        <var key="pageFileDir">admin_template_create</var>
     </template_var>
     <template_file>
         <file>

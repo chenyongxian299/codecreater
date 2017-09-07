@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <confRoot>
-    <dbConfigs>
-        <config>
-            <configName></configName>
-            <host></host>
-            <port></port>
-            <username></username>
-            <password></password>
-            <schema></schema>
-        </config>
-    </dbConfigs>
+    <dbConfig>
+        <connName name="测试连接">
+            <host>localhost</host>
+            <port>3306</port>
+            <username>cyx</username>
+            <password>VaeVae.</password>
+            <schema>cowhide</schema>
+        </connName>
+    </dbConfig>
 </confRoot>

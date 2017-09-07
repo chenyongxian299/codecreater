@@ -37,9 +37,4 @@ public class FileTemplateReader implements TemplateReader {
             return "";
         }
     }
-
-
-
-
-
 }

@@ -212,25 +212,6 @@ public class IndexFrame {
         }
     }
 
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
-    }
-
     private Creater.ICreateResult createResult = new Creater.ICreateResult() {
         @Override
         public void createSuccess() {
@@ -245,12 +226,13 @@ public class IndexFrame {
 
     private void create() throws FileNotFoundException {
         Creater creater = Creater.getInstance();
-        TemplateVariable variable = new XmlTemplateVariable();
+        TemplateVariable variable = new XmlTemplateVariable(System.getProperty("user.dir") + File.separator + "appData" + File.separator + "template_var.xml");
         creater.bindListener(createResult);
-        List<File> fileList = FileUtil.eachFile(System.getProperty("user.dir") + File.separator + "template");
+        String templateDir = System.getProperty("user.dir") + File.separator + "template";
+        List<File> fileList = FileUtil.eachFile(templateDir);
         for (File file : fileList) {
             FileTemplateReader reader = new FileTemplateReader(file.getAbsolutePath(), "utf8");
-            FileTemplateWriter writer = new FileTemplateWriter(System.getProperty("user.dir") + File.separator + "template_r" + File.separator + file.getName(), "utf8");
+            FileTemplateWriter writer = new FileTemplateWriter(System.getProperty("user.dir") + File.separator + "template_r" + FileUtil.getEndPath(templateDir, file.getPath()), "utf8");
             TemplateManagement management = new TemplateManagement(reader, writer, variable);
             creater.registTemplateManagement(file.getAbsolutePath(), management);
         }
