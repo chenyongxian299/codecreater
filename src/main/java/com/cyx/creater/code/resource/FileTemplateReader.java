@@ -2,7 +2,7 @@ package com.cyx.creater.code.resource;
 
 import java.io.*;
 
-public class FileTemplateReader implements TemplateReader {
+public class FileTemplateReader implements ITemplateReader {
 
     private String dir;
     private String charset;

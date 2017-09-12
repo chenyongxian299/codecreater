@@ -1,9 +1,9 @@
 package com.cyx.creater.code;
 
 import com.cyx.creater.code.resource.FileTemplateReader;
-import com.cyx.creater.code.resource.TemplateReader;
-import com.cyx.creater.code.resource.TemplateWriter;
-import com.cyx.creater.code.resource.TemplateVariable;
+import com.cyx.creater.code.resource.ITemplateReader;
+import com.cyx.creater.code.resource.ITemplateWriter;
+import com.cyx.creater.code.resource.ITemplateVariable;
 import com.cyx.creater.utils.ThreadUtil;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
@@ -47,6 +47,17 @@ public class Creater {
         return this;
     }
 
+    /**
+     * 注册一个模板管理器
+     *
+     * @param map 模板管理器map集合
+     * @return
+     */
+    public Creater registTemplateManagement(Map<String, TemplateManagement> map) {
+        templateManagementMap.putAll(map);
+        return this;
+    }
+
     public Creater bindListener(ICreateResult createResult) {
         this.createResult = createResult;
         return this;
@@ -67,6 +78,7 @@ public class Creater {
 
     /**
      * 异步启动 根据所有的模板管理器生成
+     *
      * @return
      */
     public Creater startAsync() {
@@ -78,9 +90,20 @@ public class Creater {
         return this;
     }
 
+    public Creater startAsyncMultiple() {
+        for (final String key : templateManagementMap.keySet()) {
+            ThreadUtil.executorService.execute(() -> {
+                runCreater(key);
+                System.out.println(key);
+            });
+        }
+        return this;
+    }
+
 
     /**
      * 同步启动  根据模板管理器名称生成
+     *
      * @param name 模板管理器名称
      * @return
      */
@@ -91,6 +114,7 @@ public class Creater {
 
     /**
      * 同步启动  根据所有的模板管理器生成
+     *
      * @return
      */
     public Creater startSync() {
@@ -107,9 +131,9 @@ public class Creater {
      */
     private void runCreater(String name) {
         TemplateManagement management = templateManagementMap.get(name);
-        TemplateReader templateReader = management.getTemplateReader();
-        TemplateWriter templateWriter = management.getTemplateWriter();
-        TemplateVariable templateVariable = management.getTemplateVariable();
+        ITemplateReader templateReader = management.getTemplateReader();
+        ITemplateWriter templateWriter = management.getTemplateWriter();
+        ITemplateVariable templateVariable = management.getTemplateVariable();
         if (templateReader == null) {
             templateReader = new FileTemplateReader("", "UTF-8");
         }

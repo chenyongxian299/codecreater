@@ -1,5 +1,5 @@
 package com.cyx.creater.code.resource;
 
-public interface TemplateReader {
+public interface ITemplateReader {
     String read();
 }

@@ -41,6 +41,15 @@ public class ColumnInfo {
 
     private String generationExpression;
 
+    private TableInfo tableInfo ;
+
+    public TableInfo getTableInfo() {
+        return tableInfo;
+    }
+
+    public void setTableInfo(TableInfo tableInfo) {
+        this.tableInfo = tableInfo;
+    }
 
     public String getColumnName() {
         return columnName;

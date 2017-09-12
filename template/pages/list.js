@@ -94,10 +94,6 @@ function ${pageFileDir}_list_datagrid_init() {
             } else {
                 shareted_easyui_datagrid_columns_icheck_init('${pageFileDir}_list_datagrid');
                 shareted_easyui_datagrid_columns_command_init();
-                $('.lightcase_image').lightcase({
-                    transition: 'elastic'
-                });
-                $('.stretch').anystretch();
             }
         },
         onLoadError: function () {

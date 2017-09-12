@@ -2,6 +2,9 @@ package com.cyx.creater.shareted.bean;
 
 import org.beetl.sql.core.annotatoin.Table;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Table(name="TABLES")
 public class TableInfo {
     public enum TableType {
@@ -15,6 +18,15 @@ public class TableInfo {
     private String engine;
     private String tableCollation;
 
+    private List<ColumnInfo> columnInfos = new ArrayList<>();
+
+    public List<ColumnInfo> getColumnInfos() {
+        return columnInfos;
+    }
+
+    public void setColumnInfos(List<ColumnInfo> columnInfos) {
+        this.columnInfos = columnInfos;
+    }
 
     public String getTableCatalog() {
         return tableCatalog;

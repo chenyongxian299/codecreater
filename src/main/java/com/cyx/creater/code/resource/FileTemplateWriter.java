@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class FileTemplateWriter implements TemplateWriter {
+public class FileTemplateWriter implements ITemplateWriter {
     private String filePath;
     private String charset;
 

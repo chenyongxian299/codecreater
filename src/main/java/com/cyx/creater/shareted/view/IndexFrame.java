@@ -9,7 +9,7 @@ import com.cyx.creater.shareted.dbhelper.BeetlSql;
 import com.cyx.creater.shareted.dbhelper.IDataSource;
 import com.cyx.creater.code.resource.FileTemplateReader;
 import com.cyx.creater.code.resource.FileTemplateWriter;
-import com.cyx.creater.code.resource.TemplateVariable;
+import com.cyx.creater.code.resource.ITemplateVariable;
 import com.cyx.creater.code.resource.XmlTemplateVariable;
 import com.cyx.creater.shareted.service.IColumnDescribe;
 import com.cyx.creater.shareted.service.ISchemaDescribe;
@@ -17,19 +17,31 @@ import com.cyx.creater.shareted.service.imp.ColumnService;
 import com.cyx.creater.shareted.service.imp.SchemaService;
 import com.cyx.creater.shareted.service.ITableDescribe;
 import com.cyx.creater.shareted.service.imp.TableService;
+import com.cyx.creater.shareted.view.model.DBTableModel;
+import com.cyx.creater.shareted.view.model.bean.TableColumn;
+import com.cyx.creater.utils.Console;
 import com.cyx.creater.utils.FileUtil;
+import com.cyx.creater.utils.SystemUtil;
+import javafx.scene.control.Tab;
 import org.beetl.sql.core.*;
+import org.dom4j.rule.Mode;
 import org.jb2011.lnf.beautyeye.ch16_tree.BETreeUI;
 import org.jb2011.lnf.beautyeye.ch2_tab.BETabbedPaneUI;
+import org.jb2011.lnf.beautyeye.ch4_scroll.BEScrollPaneUI;
+import org.jb2011.lnf.beautyeye.ch5_table.BETableUI;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class IndexFrame {
     private enum NodeType {
@@ -39,10 +51,27 @@ public class IndexFrame {
         Column
     }
 
+    /*private enum TreeMenuAccess {
+        Children, Parents, ALL
+    }
+
+    private enum DBTreeMenuCategory {
+        //Schema, Table, Column, Field;
+        private TreeMenuAccess treeMenuAccess;
+
+        private DBTreeMenuCategory(TreeMenuAccess treeMenuAccess) {
+            this.treeMenuAccess = treeMenuAccess;
+        }
+
+    }
+*/
     private static String RIGHT_NODE_NAME = "";
     private JPanel plIndex;
     private JTree tree1;
     private JTabbedPane tabRight;
+    private JToolBar tbrMenu;
+    private JTabbedPane tabLeft;
+    private JScrollPane scrollbar;
 
     private JPopupMenu pMenu = new JPopupMenu();
     private DialogJoin dialogJoin = new DialogJoin();
@@ -50,6 +79,8 @@ public class IndexFrame {
     private ISchemaDescribe schemaService;
     private ITableDescribe tableService;
     private IColumnDescribe columnService;
+
+    private Map<String, List<MenuElement>> menuMap = new HashMap<>();
 
     public IndexFrame() {
         tree1.setUI(new BETreeUI());
@@ -72,26 +103,38 @@ public class IndexFrame {
         this.tree1 = tree1;
     }
 
-    public void initDatabaseInfo(IDataSource dataSource) {
-        JMenu copyMenu = new JMenu("复制");
+    private void initRightClickMenu() {
+        JMenu mCopyMenu = new JMenu("复制");
         JMenuItem mCopyTableName = new JMenuItem("复制表名");
         JMenuItem mCopyColumnName = new JMenuItem("复制列名");
         JMenuItem mCopyColumnsName = new JMenuItem("复制表下列名");
-        copyMenu.add(mCopyTableName);
-        copyMenu.add(mCopyColumnName);
-        copyMenu.add(mCopyColumnsName);
-
+        mCopyMenu.add(mCopyTableName);
+        mCopyMenu.add(mCopyColumnName);
+        mCopyMenu.add(mCopyColumnsName);
+        JMenuItem mGenerateMenu = new JMenuItem("生成");
         JMenu mFormat = new JMenu("格式化");
         JMenuItem mFormatColumns = new JMenuItem("格式化列名");
         mFormat.add(mFormatColumns);
-        JMenuItem mItemPaste = new JMenuItem("打开tab");
-        //JMenuItem mItemCut = new JMenuItem("剪切");
-        mItemPaste.addActionListener(menuActionListener);
+        JMenuItem mShowTableInfo = new JMenuItem("查看表详情");
+        JMenuItem mOpenTab = new JMenuItem("打开tab");
+        mOpenTab.addActionListener(menuActionListener);
         mCopyColumnsName.addActionListener(menuActionListener);
-        pMenu.add(copyMenu);
-        pMenu.add(mItemPaste);
+        mGenerateMenu.addActionListener(menuActionListener);
+        mShowTableInfo.addActionListener(menuActionListener);
+        pMenu.add(mCopyMenu);
+        pMenu.add(mOpenTab);
         pMenu.add(mFormat);
+        pMenu.add(mGenerateMenu);
+        pMenu.add(mShowTableInfo);
         tree1.add(pMenu);
+        List<MenuElement> menuList = new ArrayList<>();
+        menuList.add(mCopyMenu);
+        menuList.add(mOpenTab);
+        menuList.add(mFormat);
+    }
+
+    public void initDatabaseInfo(IDataSource dataSource) {
+        initRightClickMenu();
         tree1.setScrollsOnExpand(true);
         BeetlSql beetlSql = BeetlSql.getInstance();
         SQLManager sqlManager = beetlSql.registerSqlManager("/sql/mysql", dataSource);
@@ -107,7 +150,7 @@ public class IndexFrame {
             }
             tree1.setModel(new DefaultTreeModel(root));
         }).start();
-        tree1.addMouseListener(ml);
+        tree1.addMouseListener(rightClickMenuAdapter);
     }
 
     ActionListener menuActionListener = new ActionListener() {
@@ -121,25 +164,44 @@ public class IndexFrame {
             } else if ("复制表下列名".equals(e.getActionCommand())) {
                 String columnsName = columnService.getColumnsNameStr(RIGHT_NODE_NAME);
                 List<ColumnInfo> columnInfos = columnService.getColumnsDescribe(RIGHT_NODE_NAME);
-                System.out.println(columnsName);
+                SystemUtil.setClipbordContents(columnsName);
+            } else if ("生成".equals(e.getActionCommand())) {
                 try {
                     create();
                 } catch (FileNotFoundException e1) {
                     e1.printStackTrace();
                 }
+            } else if ("查看表详情".equals(e.getActionCommand())) {
+                JScrollPane tabPane = new JScrollPane();
+                tabPane.setUI(new BEScrollPaneUI());
+                JTable jTable = new JTable();
+                jTable.setUI(new BETableUI());
+                List<TableColumn> tableColumns = new ArrayList<>();
+                List<ColumnInfo> columnInfos = columnService.getColumnsDescribe(RIGHT_NODE_NAME);
+                for (ColumnInfo columnInfo : columnInfos) {
+                    TableColumn tableColumn = new TableColumn();
+                    tableColumn.setColumnName(columnInfo.getColumnName());
+                    tableColumn.setPrimaryKey("PRI".equals(columnInfo.getColumnKey()));
+                    tableColumns.add(tableColumn);
+                }
+                DBTableModel dbTableModel = new DBTableModel(tableColumns);
+                jTable.setModel(dbTableModel);
+                jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+                tabPane.setViewportView(jTable);
+                tabRight.add(tabPane, "详情");
             }
         }
     };
 
-    MouseListener ml = new MouseAdapter() {
+    MouseListener rightClickMenuAdapter = new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON3) {//只响应鼠标右键单击事件
-                pMenu.show(tree1, e.getX(), e.getY());//在鼠标位置显示弹出式菜单
+                pMenu.show(tree1, e.getX(), e.getY());//在鼠标位置
+                // 显示弹出式菜单
                 int selRow = tree1.getRowForLocation(e.getX(), e.getY());
                 TreePath selPath = tree1.getPathForLocation(e.getX(), e.getY());
                 if (selRow != -1) {
-                    String childrenName = getChildrenName(selPath.getLastPathComponent());
-                    System.out.println(childrenName);
+
                 }
             } else {
                 int selRow = tree1.getRowForLocation(e.getX(), e.getY());
@@ -174,6 +236,20 @@ public class IndexFrame {
             return NodeType.Column;
         } else {
             return NodeType.Root;
+        }
+    }
+
+    private void showMenuItem(Object obj) {
+        DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) obj;
+        Object dataObj = defaultMutableTreeNode.getUserObject();
+        if (dataObj instanceof SchemataInfo) {
+
+        } else if (dataObj instanceof TableInfo) {
+
+        } else if (dataObj instanceof ColumnInfo) {
+
+        } else {
+
         }
     }
 
@@ -215,18 +291,21 @@ public class IndexFrame {
     private Creater.ICreateResult createResult = new Creater.ICreateResult() {
         @Override
         public void createSuccess() {
-            System.err.println("---");
+            Console.log("创建成功");
         }
 
         @Override
         public void createFail(Exception e) {
-            System.err.println(e);
+            Console.log("创建失败");
         }
     };
 
     private void create() throws FileNotFoundException {
         Creater creater = Creater.getInstance();
-        TemplateVariable variable = new XmlTemplateVariable(System.getProperty("user.dir") + File.separator + "appData" + File.separator + "template_var.xml");
+        String xmlVariablePath = System.getProperty("user.dir") + File.separator + "appData" + File.separator + "template_var.xml";
+        ITemplateVariable variable = new XmlTemplateVariable(xmlVariablePath);
+        variable.putVariable("tableName", "iods_order_property");
+        variable.putVariable("webRootDirRelative", "../../../");
         creater.bindListener(createResult);
         String templateDir = System.getProperty("user.dir") + File.separator + "template";
         List<File> fileList = FileUtil.eachFile(templateDir);

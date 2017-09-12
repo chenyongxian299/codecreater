@@ -1,43 +1,43 @@
 package com.cyx.creater.code;
 
-import com.cyx.creater.code.resource.TemplateReader;
-import com.cyx.creater.code.resource.TemplateVariable;
-import com.cyx.creater.code.resource.TemplateWriter;
+import com.cyx.creater.code.resource.ITemplateReader;
+import com.cyx.creater.code.resource.ITemplateVariable;
+import com.cyx.creater.code.resource.ITemplateWriter;
 
 public class TemplateManagement {
-    private TemplateReader templateReader;
+    private ITemplateReader templateReader;
 
-    private TemplateWriter templateWriter;
+    private ITemplateWriter templateWriter;
 
-    private TemplateVariable templateVariable;
+    private ITemplateVariable templateVariable;
 
-    public TemplateManagement(TemplateReader reader, TemplateWriter writer, TemplateVariable variable) {
+    public TemplateManagement(ITemplateReader reader, ITemplateWriter writer, ITemplateVariable variable) {
         this.templateReader = reader;
         this.templateWriter = writer;
         this.templateVariable = variable;
     }
 
-    public TemplateReader getTemplateReader() {
+    public ITemplateReader getTemplateReader() {
         return templateReader;
     }
 
-    public void setTemplateReader(TemplateReader templateReader) {
+    public void setTemplateReader(ITemplateReader templateReader) {
         this.templateReader = templateReader;
     }
 
-    public TemplateWriter getTemplateWriter() {
+    public ITemplateWriter getTemplateWriter() {
         return templateWriter;
     }
 
-    public void setTemplateWriter(TemplateWriter templateWriter) {
+    public void setTemplateWriter(ITemplateWriter templateWriter) {
         this.templateWriter = templateWriter;
     }
 
-    public TemplateVariable getTemplateVariable() {
+    public ITemplateVariable getTemplateVariable() {
         return templateVariable;
     }
 
-    public void setTemplateVariable(TemplateVariable templateVariable) {
+    public void setTemplateVariable(ITemplateVariable templateVariable) {
         this.templateVariable = templateVariable;
     }
 }
