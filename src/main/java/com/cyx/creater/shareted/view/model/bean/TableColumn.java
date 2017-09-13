@@ -5,6 +5,15 @@ public class TableColumn {
     private boolean isPrimaryKey;
     private boolean isShow;
     private boolean isSearch;
+    private boolean isOrder;
+
+    public boolean isOrder() {
+        return isOrder;
+    }
+
+    public void setOrder(boolean order) {
+        isOrder = order;
+    }
 
     public boolean isSearch() {
         return isSearch;

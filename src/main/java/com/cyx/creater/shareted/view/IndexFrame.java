@@ -17,25 +17,22 @@ import com.cyx.creater.shareted.service.imp.ColumnService;
 import com.cyx.creater.shareted.service.imp.SchemaService;
 import com.cyx.creater.shareted.service.ITableDescribe;
 import com.cyx.creater.shareted.service.imp.TableService;
+import com.cyx.creater.shareted.view.component.EditableTable;
 import com.cyx.creater.shareted.view.model.DBTableModel;
 import com.cyx.creater.shareted.view.model.bean.TableColumn;
 import com.cyx.creater.utils.Console;
 import com.cyx.creater.utils.FileUtil;
 import com.cyx.creater.utils.SystemUtil;
-import javafx.scene.control.Tab;
 import org.beetl.sql.core.*;
-import org.dom4j.rule.Mode;
 import org.jb2011.lnf.beautyeye.ch16_tree.BETreeUI;
 import org.jb2011.lnf.beautyeye.ch2_tab.BETabbedPaneUI;
 import org.jb2011.lnf.beautyeye.ch4_scroll.BEScrollPaneUI;
 import org.jb2011.lnf.beautyeye.ch5_table.BETableUI;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -44,27 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 public class IndexFrame {
-    private enum NodeType {
-        Root,
-        Schema,
-        Table,
-        Column
-    }
-
-    /*private enum TreeMenuAccess {
-        Children, Parents, ALL
-    }
-
-    private enum DBTreeMenuCategory {
-        //Schema, Table, Column, Field;
-        private TreeMenuAccess treeMenuAccess;
-
-        private DBTreeMenuCategory(TreeMenuAccess treeMenuAccess) {
-            this.treeMenuAccess = treeMenuAccess;
-        }
-
-    }
-*/
     private static String RIGHT_NODE_NAME = "";
     private JPanel plIndex;
     private JTree tree1;
@@ -93,14 +69,6 @@ public class IndexFrame {
 
     public void setPlIndex(JPanel plIndex) {
         this.plIndex = plIndex;
-    }
-
-    public JTree getTree1() {
-        return tree1;
-    }
-
-    public void setTree1(JTree tree1) {
-        this.tree1 = tree1;
     }
 
     private void initRightClickMenu() {
@@ -174,7 +142,7 @@ public class IndexFrame {
             } else if ("查看表详情".equals(e.getActionCommand())) {
                 JScrollPane tabPane = new JScrollPane();
                 tabPane.setUI(new BEScrollPaneUI());
-                JTable jTable = new JTable();
+                EditableTable jTable = new EditableTable();
                 jTable.setUI(new BETableUI());
                 List<TableColumn> tableColumns = new ArrayList<>();
                 List<ColumnInfo> columnInfos = columnService.getColumnsDescribe(RIGHT_NODE_NAME);
@@ -189,6 +157,15 @@ public class IndexFrame {
                 jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
                 tabPane.setViewportView(jTable);
                 tabRight.add(tabPane, "详情");
+                JPanel closePanel = new JPanel();
+                JLabel tabTitle = new JLabel("详情");
+                JButton btnClose = new JButton("X");
+                closePanel.add(tabTitle);
+                closePanel.add(btnClose);
+                btnClose.addActionListener((event)->{
+                    tabRight.remove(tabRight.indexOfTabComponent(closePanel));
+                });
+                tabRight.setTabComponentAt(tabRight.getTabCount() - 1, closePanel);
             }
         }
     };
@@ -222,21 +199,6 @@ public class IndexFrame {
         DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) object;
         Object dataObj = defaultMutableTreeNode.getUserObject();
         return object.toString();
-    }
-
-    private NodeType getNodeType(Object object) {
-        DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) object;
-        Object dataObj = defaultMutableTreeNode.getUserObject();
-        String childrenName = null;
-        if (dataObj instanceof SchemataInfo) {
-            return NodeType.Schema;
-        } else if (dataObj instanceof TableInfo) {
-            return NodeType.Table;
-        } else if (dataObj instanceof ColumnInfo) {
-            return NodeType.Column;
-        } else {
-            return NodeType.Root;
-        }
     }
 
     private void showMenuItem(Object obj) {

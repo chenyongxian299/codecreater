@@ -7,6 +7,7 @@ import com.cyx.creater.shareted.dbhelper.IConnection;
 import com.cyx.creater.shareted.dbhelper.IDataSource;
 import com.cyx.creater.shareted.dbhelper.JDBConnection;
 import com.cyx.creater.shareted.utils.XmlUtil;
+import com.sun.java.swing.SwingUtilities3;
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 import org.jb2011.lnf.beautyeye.ch14_combox.BEComboBoxUI;
 import org.jb2011.lnf.beautyeye.ch3_button.BEButtonUI;
@@ -22,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Login {
-    private static JFrame loginFrame;
-    private static JFrame indexFrame;
+    private static JFrame loginFrame = new JFrame("code creater");
+    private static JFrame  indexFrame = new JFrame("IndexFrame");
 
     private JPanel plLogin;
     private JButton btnConnTest;
@@ -80,6 +81,7 @@ public class Login {
     public Login() {
         btnConn.setUI(new BEButtonUI().setNormalColor(BEButtonUI.NormalColor.blue));
         btnConn.setForeground(Color.white);
+        loginFrame.getRootPane().setDefaultButton(btnConn);
         btnCancel.setUI(new BEButtonUI().setNormalColor(BEButtonUI.NormalColor.normal));
         btnConnTest.setUI(new BEButtonUI().setNormalColor(BEButtonUI.NormalColor.normal));
         btnCancel.addActionListener((event) -> System.exit(0));
@@ -153,7 +155,7 @@ public class Login {
                 UIManager.put(DEFAULT_FONT[i], font);
             }
             UIManager.put("RootPane.setupButtonVisible", false);
-            UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(3, 20, 2, 20));
+            UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(3, 5, 2, 5));
         } catch (Exception e) {
             //TODO exception
         }
@@ -207,7 +209,7 @@ public class Login {
             login.cbxConnectionName.addItem(dbConfigInfo);
         }
 
-        loginFrame = new JFrame("code creater");
+
         loginFrame.setContentPane(login.plLogin);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.pack();
@@ -216,7 +218,6 @@ public class Login {
         initMenu();
 
         indexFrameObj = new IndexFrame();
-        indexFrame = new JFrame("IndexFrame");
         indexFrame.setContentPane(indexFrameObj.getPlIndex());
         indexFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         indexFrame.pack();

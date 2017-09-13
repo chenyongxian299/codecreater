@@ -19,7 +19,10 @@ public class DBTableModel implements TableModel {
     private List<TableColumn> tableColumns;
     private TableTitle[] tableTitles = new TableTitle[]{
             new TableTitle("列名", "columnName"),
-            new TableTitle("主键", "isPrimaryKey")
+            new TableTitle("主键", "isPrimaryKey"),
+            new TableTitle("显示", "isShow"),
+            new TableTitle("搜索", "isSearch"),
+            new TableTitle("排序", "isOrder")
     };
 
     public DBTableModel(List<TableColumn> tableColumns) {
@@ -48,6 +51,9 @@ public class DBTableModel implements TableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if (columnIndex > 1) {
+            return true;
+        }
         return false;
     }
 
